@@ -1,0 +1,32 @@
+*.class
+*.log
+
+# sbt specific
+dist/*
+target/
+out/
+bots/
+build/
+lib/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+
+# Eclipse
+.buildpath
+.classpath
+.project
+.cache
+.settings/
+
+#Intellij
+.idea
+.idea_modules
+.DS_Store
+*.swp
+*~.nib
+

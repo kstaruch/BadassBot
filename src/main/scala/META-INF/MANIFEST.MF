@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Class-Path: scala-library.jar process-0.12.1.jar commons-io-2.0.1.jar 
+ classfile-0.12.1.jar logging-0.12.1.jar commons-httpclient-3.1.jar co
+ llections-0.12.1.jar command-0.12.1.jar completion-0.12.1.jar run-0.1
+ 2.1.jar commons-logging-1.0.4.jar jline-1.0.jar commons-codec-1.2.jar
+  io-0.12.1.jar api-0.12.1.jar incremental-compiler-0.12.1.jar task-sy
+ stem-0.12.1.jar jansi.jar tracking-0.12.1.jar compiler-integration-0.
+ 12.1.jar scala-compiler.jar sbteclipse-plugin-2.1.0.jar main-0.12.1.j
+ ar classpath-0.12.1.jar sbteclipse-core-2.1.0.jar jsch-0.1.46.jar act
+ ions-0.12.1.jar interface-0.12.1.jar compiler-ivy-integration-0.12.1.
+ jar compile-0.12.1.jar test-interface-0.5.jar scala-library.jar persi
+ st-0.12.1.jar test-agent-0.12.1.jar ivy-2.3.0-rc1.jar cache-0.12.1.ja
+ r testing-0.12.1.jar launcher-interface-0.12.1.jar jline.jar ivy-0.12
+ .1.jar sbinary_2.9.0-0.4.0.jar scalaz-core_2.9.2-6.0.4.jar tasks-0.12
+ .1.jar control-0.12.1.jar sbt-0.12.1.jar sbt-idea-1.2.0.jar scala-lib
+ rary.jar scala-compiler.jar
+
