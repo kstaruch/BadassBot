@@ -6,7 +6,7 @@ import framework._
 import scala.Some
 
 
-class CommandParserTests  extends FunSpec with ShouldMatchers {
+class ViewTests  extends FunSpec with ShouldMatchers {
 
   describe("View") {
 
