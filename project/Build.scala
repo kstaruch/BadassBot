@@ -11,16 +11,27 @@ object Build extends Build {
       IO createDirectory (bots / name)
       IO copyFile (botJar, bots / name / "ScalatronBot.jar")
 
-     /* val cmd = "java %s -cp %s scalatron.main.Main -plugins %s" format (
+
+    val ucpfiles =  ucp.files match {
+      case Seq() => botJar :: Nil
+      case _ => Seq(ucp.files.head, botJar)
+    }
+
+      /*val cmd = "java %s -cp %s scalatron.main.Main -plugins %s" format (
         javaOptions mkString " ",
-        Seq(ucp.files.head, botJar).absString,
-        bots.absolutePath)*/
+        //Seq(ucp.files.head, botJar).absString,
+        ucpfiles.absString,
+        bots.absolutePath)
+       */
+      //print("after")
+
       //-x 150 -y 150
-     val cmd = "java %s -cp %s -jar D:/dev/Scalatron/bin/Scalatron.jar -plugins %s -browser no" format (
+     val cmd = "java %s -cp %s -jar C:/dev/Scalatron/bin/Scalatron.jar -plugins %s -browser no" format (
        javaOptions mkString " ",
-       Seq(ucp.files.head, botJar).absString,
+        ucpfiles.absString,
        bots.absolutePath)
-      cmd run
+     print(cmd)
+     cmd run
   }
 
   val bot = Project(
