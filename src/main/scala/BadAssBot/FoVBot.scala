@@ -15,9 +15,9 @@ import framework.Set
 class FoVBot {
 
   val actionSelector: ActionSelector = OneWithHighestFactor()
-  def allShortTermGoals: Seq[Goal] = RunFromEnemy(5) :: Nil
+  def allShortTermGoals: Seq[Goal] = RunFromEnemy(4) :: Nil
   def allLongTermGoals: Seq[Goal] = MN :: MNE :: ME :: MSE :: MS :: MSW :: MW :: MNW ::Nil
-  def allActionGoals: Seq[Goal] = RandomMinionSpawn(0.05) :: EnemyProximityMinionSpawn(10) ::  Nil
+  def allActionGoals: Seq[Goal] = RandomMinionSpawn(0.1) :: EnemyProximityMinionSpawn(15) ::  Nil
 
   def React(externalState: ExternalState): Seq[MiniOp] = {
 
@@ -26,7 +26,7 @@ class FoVBot {
     val prevMoveState = saveState(externalState, moveStrategy)
     val reloadState = saveStateReload(externalState, actionStrategy)
 
-    moveStrategy :: actionStrategy :: prevMoveState :: reloadState :: Nil
+    moveStrategy :: actionStrategy :: /*prevMoveState ::*/ reloadState :: Nil
   }
 
   def selectMovementStrategy(externalState: ExternalState): MiniOp = {
@@ -34,9 +34,19 @@ class FoVBot {
     val shortTermGoals = generateShortTermGoals(externalState)
     val longTermGoals = generateLongTermGoals(externalState)
 
+    val enforced = enforcePreviousMovement(longTermGoals, externalState.previousMove)
+
     actionSelector.selectOneOf(shortTermGoals) match {
       case Some(a: PossibleAction) => a.op
-      case None => actionSelector.selectOneOf(longTermGoals).getOrElse(generateWanderingGoal(externalState)).op
+      case None => actionSelector.selectOneOf(/*longTermGoals*/enforced).getOrElse(generateWanderingGoal(externalState)).op
+    }
+  }
+
+  def enforcePreviousMovement(goals: Seq[PossibleAction], previousMove: Coord): Seq[PossibleAction] = {
+
+    goals.indexWhere(pa => pa.op == Move(previousMove.toHeading)) match {
+      case i if i >= 0 => goals.updated(i, PossibleAction(goals(i).op, goals(i).factor + 10))
+      case _ => goals
     }
   }
 
@@ -49,19 +59,26 @@ class FoVBot {
     }
   }
 
+  def saveState2(): MiniOp = {
+    null
+  }
+
   def saveState(externalState: ExternalState, move: MiniOp): MiniOp = {
 
     val (pmk, pmv) = move match {
       case m : Move => (externalState.name + "_prevMove",  "%d:%d".format(m.direction.x.value, m.direction.y.value))
       case _ => ("", "")
     }
+
+
+
     Set(Map[String, String]((pmk, pmv)))
   }
 
   def saveStateReload(externalState: ExternalState, action: MiniOp): MiniOp = {
 
     val newReload = action match {
-      case _: EnemyProximityMinionSpawn => 10
+      case x: Spawn => 1
       case _ => (externalState.reloadCounter - 1) max 0
     }
     val (rmk, rmv) = ("reloadCounter", "%d".format(newReload))

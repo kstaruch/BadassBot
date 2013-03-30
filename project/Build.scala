@@ -15,6 +15,7 @@ object Build extends Build {
         javaOptions mkString " ",
         Seq(ucp.files.head, botJar).absString,
         bots.absolutePath)*/
+      //-x 150 -y 150
      val cmd = "java %s -cp %s -jar D:/dev/Scalatron/bin/Scalatron.jar -plugins %s -browser no" format (
        javaOptions mkString " ",
        Seq(ucp.files.head, botJar).absString,
@@ -38,7 +39,8 @@ object Build extends Build {
 
     libraryDependencies ++= Seq(
       "junit" % "junit" % "4.8.1" % "test",
-      "org.scalatest" %% "scalatest" % "1.8" % "test"
+      "org.scalatest" %% "scalatest" % "1.8" % "test",
+      "net.debasishg" %% "sjson" % "0.17" % "compile"
     ),
 
     botDirectory := file("bots"),

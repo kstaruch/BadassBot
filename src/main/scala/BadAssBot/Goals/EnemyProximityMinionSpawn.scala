@@ -8,9 +8,11 @@ case class EnemyProximityMinionSpawn(range: Int) extends Goal {
   def evaluate(externalState: ExternalState): Option[PossibleAction] = {
     //TODO: map instead match
     externalState.view.nearestEnemyInRange(range) match {
-      case Some(coords) if externalState.isReadyToFire =>
+      case Some(coords) if externalState.isReadyToFire => {
+        //print("fire ")
         Some(PossibleAction(Spawn(direction = coords.signum.toHeading, energy = 100), 1))
-      case None => None
+      }
+      case _ => None
     }
   }
 }

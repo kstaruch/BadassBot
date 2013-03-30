@@ -10,6 +10,8 @@ class ControlFunctionFactory {
     opcode match {
       case "React" =>
 
+        try {
+
         val generation = params.get("generation").map(_.toInt).get
         val name = params.get("name").get
         val time = params.get("time").map(_.toInt).get
@@ -28,7 +30,15 @@ class ControlFunctionFactory {
           case _ => new MiniFoVBot()
         }
 
-        bot.React(externalState).mkString("|")
+        val r = bot.React(externalState).mkString("|")
+        r
+        }catch {
+          case e: Exception => {
+            val s = e.getMessage
+            e.printStackTrace()
+            ""
+          }
+        }
 
       case _ => ""
     }

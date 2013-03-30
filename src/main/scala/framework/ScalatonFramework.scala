@@ -252,7 +252,11 @@ object Util {
       case (n, v)       => w.append(n).append("=").append(v.toString).append(",")
     }
 
-    w.append(")").toString
+    val s = w.toString
+
+    s.substring(0, s.length - 1) + ")"
+
+    //w.append(")").toString
   }
 }
 
@@ -261,17 +265,17 @@ object Heading {
   def parse(s: String): Heading = Util.parse(s)(Heading.apply)
   def apply(x: Int, y: Int): Heading =
     if (x == 1) {
-      if (y == 1) NorthEast
+      if (y == 1) SouthEast
       else if (y == 0) East
-      else SouthEast
+      else NorthEast
     } else if (x == 0) {
-      if (y == 1) North
+      if (y == 1) South
       else if (y == 0) Nowhere
-      else South
+      else North
     } else {
-      if (y == 1) NorthWest
+      if (y == 1) SouthWest
       else if (y == 0) West
-      else SouthWest
+      else NorthWest
     }
 
   def random: Heading = {

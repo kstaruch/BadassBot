@@ -9,7 +9,10 @@ case class RandomMinionSpawn(randomSpawnChance: Double) extends Goal {
   def evaluate(externalState: ExternalState): Option[PossibleAction] = {
     Random.nextDouble() match {
       case x if x < randomSpawnChance && externalState.energy > 1000
-        => Some(PossibleAction(Spawn(direction = Heading.random, energy = 100), 1))
+        => {
+        //print("random ")
+        Some(PossibleAction(Spawn(direction = Heading.random, energy = 100), 1))
+      }
       case _ => None
     }
   }
