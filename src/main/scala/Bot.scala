@@ -20,10 +20,13 @@ class ControlFunctionFactory {
         val master =  Coord.parse(params.getOrElse("master", "0:0"))
         val reloadCounter = params.getOrElse("reloadCounter", "0").toInt
         val previousMove =  Coord.parse(params.getOrElse(name + "_prevMove" , "0:0"))
+        val internalStateSerialized = params.getOrElse("internalState", "")
 
         val externalState = ExternalState(
-          generation, name, time, view, energy, master, previousMove, reloadCounter
+          generation, name, time, view, energy, master, previousMove, reloadCounter, internalStateSerialized
         )
+
+
 
         val bot = generation match {
           case 0 => new FoVBot()

@@ -6,10 +6,36 @@ import Goals._
 import Goals.EnemyProximityMinionSpawn
 import Goals.RandomMinionSpawn
 import Goals.RunFromEnemy
+import StatePersister.{JsonStatePersister, MyStatePersister}
 import util.Random
 import scala.Some
 import framework.Move
 import framework.Set
+import reflect.BeanInfo
+
+
+object InternalState {
+
+  def empty(): InternalState = {
+    InternalState(Coord(0, 0), 0)
+  }
+
+  def fromXML(node: scala.xml.Node): InternalState =
+    InternalState(Coord.parse((node \ "previousMove").text), (node \ "reloadCounter").text.toInt)
+
+}
+
+@BeanInfo
+case class InternalState(previousMove: Coord, reloadCounter: Int) {
+
+  def toXML =
+    <state>
+      <previousMove>{previousMove.toString}</previousMove>
+      <reloadCounter>{reloadCounter}</reloadCounter>
+    </state>
+
+  def this() = this(Coord(0, 0), 0)  // default constructor is necessary for deserialization
+}
 
 
 class FoVBot {
@@ -21,20 +47,29 @@ class FoVBot {
 
   def React(externalState: ExternalState): Seq[MiniOp] = {
 
-    val moveStrategy = slideIfNeeded(selectMovementStrategy(externalState).asInstanceOf[Move], externalState)
+    //val internalState = MyStatePersister().load(externalState.internalStateSerialized)
+    //val per = new JsonStatePersister()
+    //val persistantJson = per.load("")
+    val internalState = MyStatePersister().load(externalState.internalStateSerialized)
+
+    val moveStrategy = slideIfNeeded(selectMovementStrategy(externalState, internalState).asInstanceOf[Move], externalState)
     val actionStrategy = selectActionStrategy(externalState)
     val prevMoveState = saveState(externalState, moveStrategy)
     val reloadState = saveStateReload(externalState, actionStrategy)
 
-    moveStrategy :: actionStrategy :: /*prevMoveState ::*/ reloadState :: Nil
+    val newInternalState = InternalState(Coord(moveStrategy.asInstanceOf[Move].direction), internalState.reloadCounter + 1)
+
+    val stateToSave = MyStatePersister().save(newInternalState).asInstanceOf[MiniOp]
+
+    moveStrategy :: actionStrategy :: /*prevMoveState ::*/ reloadState :: stateToSave :: Nil
   }
 
-  def selectMovementStrategy(externalState: ExternalState): MiniOp = {
+  def selectMovementStrategy(externalState: ExternalState, internalState: InternalState): MiniOp = {
 
     val shortTermGoals = generateShortTermGoals(externalState)
     val longTermGoals = generateLongTermGoals(externalState)
 
-    val enforced = enforcePreviousMovement(longTermGoals, externalState.previousMove)
+    val enforced = enforcePreviousMovement(longTermGoals, internalState.previousMove)
 
     actionSelector.selectOneOf(shortTermGoals) match {
       case Some(a: PossibleAction) => a.op
@@ -45,7 +80,7 @@ class FoVBot {
   def enforcePreviousMovement(goals: Seq[PossibleAction], previousMove: Coord): Seq[PossibleAction] = {
 
     goals.indexWhere(pa => pa.op == Move(previousMove.toHeading)) match {
-      case i if i >= 0 => goals.updated(i, PossibleAction(goals(i).op, goals(i).factor + 10))
+      case i if i >= 0 => goals.updated(i, PossibleAction(goals(i).op, goals(i).factor + 20))
       case _ => goals
     }
   }

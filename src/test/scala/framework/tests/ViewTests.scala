@@ -6,6 +6,7 @@ import framework._
 import scala.Some
 import util.parsing.json.JSON
 import reflect.BeanInfo
+import BadAssBot.StatePersister.MyStatePersister
 
 
 class ViewTests  extends FunSpec with ShouldMatchers {
@@ -24,14 +25,19 @@ class ViewTests  extends FunSpec with ShouldMatchers {
       val view: View = View(v)
 
       view.offsetToNearest(Cell.BadBeast) should equal(Some(Coord(2, 0)))
-      /*
+
       val t1 = new MyClass(1, 2, "0:3")
 
       val json = sjson.json.Serializer.SJSON.toJSON(t1)
 
       val t2 = sjson.json.Serializer.SJSON.in[MyClass](json)
 
-      t2*/
+      t2
+
+      val persistantJson = MyStatePersister().load("")
+
+      persistantJson
+
       /*
       val h1 = Heading(-1,1)
 
