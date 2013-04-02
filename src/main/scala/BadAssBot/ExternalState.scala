@@ -2,9 +2,14 @@ package BadAssBot
 
 import framework.{Coord, View}
 
-case class ExternalState(generation: Int, name: String, time: Int, apocalypse: Option[Int], view: View,
+case class ExternalState(generation: Int, name: String, time: Int, apocalypse: Int, view: View,
                          energy: Int, master: Coord, previousMove: Coord, reloadCounter: Int, internalStateSerialized: String) {
 
+  def isApocalypseComing: Boolean = {
+
+    val remains = apocalypse - time
+    remains < 200 //just because
+  }
 
 
   val isReadyToFire = reloadCounter == 0

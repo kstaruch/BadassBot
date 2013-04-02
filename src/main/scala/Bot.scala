@@ -4,45 +4,48 @@ import BadAssBot.{MiniFoVBot, ExternalState, FoVBot}
 
 class ControlFunctionFactory {
 
-  def create = (input: String) => {
-    val (opcode, params) = CommandParser.parse(input)
+  def create = new ControlFunction().respond _
+}
 
-    var apocalypse: Option[Int] = None
+class ControlFunction {
+
+  var globals = Map[String, String]()
+
+  def respond(input: String): String = {
+    val (opcode, params) = CommandParser.parse(input)
 
     opcode match {
       case "Welcome" =>
-        apocalypse = Some(params.get("apocalypse").get.toInt)
-
+        globals = params
+        ""
       case "React" =>
 
         try {
 
-        val generation = params.get("generation").map(_.toInt).get
-        val name = params.get("name").get
-        val time = params.get("time").map(_.toInt).get
-        val view = View(params.get("view").get)
-        val energy = params.get("energy").map(_.toInt).get
-        val master =  Coord.parse(params.getOrElse("master", "0:0"))
-        val reloadCounter = params.getOrElse("reloadCounter", "0").toInt
-        val previousMove =  Coord.parse(params.getOrElse(name + "_prevMove" , "0:0"))
-        val internalStateSerialized = params.getOrElse("internalState", "")
+          val generation = params.get("generation").map(_.toInt).get
+          val name = params.get("name").get
+          val time = params.get("time").map(_.toInt).get
+          val view = View(params.get("view").get)
+          val energy = params.get("energy").map(_.toInt).get
+          val master =  Coord.parse(params.getOrElse("master", "0:0"))
+          val reloadCounter = params.getOrElse("reloadCounter", "0").toInt
+          val previousMove =  Coord.parse(params.getOrElse(name + "_prevMove" , "0:0"))
+          val internalStateSerialized = params.getOrElse("internalState", "")
+          val apocalypse = globals.getOrElse("apocalypse", "0").toInt
 
-        val externalState = ExternalState(
-          generation, name, time, apocalypse, view, energy, master, previousMove, reloadCounter, internalStateSerialized
-        )
+          val externalState = ExternalState(
+            generation, name, time, apocalypse, view, energy, master, previousMove, reloadCounter, internalStateSerialized
+          )
 
+          val bot = generation match {
+            case 0 => new FoVBot()
+            case _ => new MiniFoVBot()
+          }
 
+          bot.React(externalState).mkString("|")
 
-        val bot = generation match {
-          case 0 => new FoVBot()
-          case _ => new MiniFoVBot()
-        }
-
-        val r = bot.React(externalState).mkString("|")
-        r
-        }catch {
+        } catch {
           case e: Exception => {
-            val s = e.getMessage
             e.printStackTrace()
             ""
           }
@@ -50,10 +53,8 @@ class ControlFunctionFactory {
 
       case _ => ""
     }
-
   }
 }
-
 
 /** Utility methods for parsing strings containing a single command of the format
   * "Command(key=value,key=value,...)"

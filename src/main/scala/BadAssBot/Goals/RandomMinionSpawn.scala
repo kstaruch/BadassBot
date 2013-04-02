@@ -8,9 +8,8 @@ case class RandomMinionSpawn(randomSpawnChance: Double) extends Goal {
 
   def evaluate(externalState: ExternalState, internalState: InternalState): Option[PossibleAction] = {
     Random.nextDouble() match {
-      case x if x < randomSpawnChance && externalState.energy > 200 && !internalState.isAlmostApocalypse(externalState.time)
+      case x if x < randomSpawnChance && externalState.energy > 200 && !externalState.isApocalypseComing
         => Some(PossibleAction(Spawn(direction = Heading.random, energy = 100), 1))
-
       case _ => None
     }
   }

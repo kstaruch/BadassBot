@@ -6,7 +6,7 @@ import framework._
 import scala.Some
 import util.parsing.json.JSON
 import reflect.BeanInfo
-import BadAssBot.StatePersister.MyStatePersister
+import BadAssBot.StatePersister.BotStatePersister
 
 
 class ViewTests  extends FunSpec with ShouldMatchers {

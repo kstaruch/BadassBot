@@ -10,16 +10,10 @@ case class GoHome(energyThreshold: Int) extends Goal {
     externalState match {
       case s if s.isSlave && s.energy > energyThreshold
         => Some(PossibleAction(Move(Heading(s.master.x.signum, s.master.y.signum)), s.energy))
-      case s if s.isSlave && apocalypseIsComing(s.master.distanceTo(s.view.center), internalState.apocalypse.getOrElse(5000), externalState.time)
+      case s if s.isSlave && externalState.isApocalypseComing
         => Some(PossibleAction(Move(Heading(s.master.x.signum, s.master.y.signum)), 100))
       case _ => None
     }
-  }
-
-  def apocalypseIsComing(distance: Double, apocalypse: Int, time: Int): Boolean = {
-    val remains = apocalypse - time
-
-    remains < (distance * 0.75)
   }
 
 }
