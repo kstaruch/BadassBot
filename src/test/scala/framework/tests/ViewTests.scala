@@ -26,17 +26,6 @@ class ViewTests  extends FunSpec with ShouldMatchers {
 
       view.offsetToNearest(Cell.BadBeast) should equal(Some(Coord(2, 0)))
 
-      val t1 = new MyClass(1, 2, "0:3")
-
-      val json = sjson.json.Serializer.SJSON.toJSON(t1)
-
-      val t2 = sjson.json.Serializer.SJSON.in[MyClass](json)
-
-      t2
-
-      val persistantJson = MyStatePersister().load("")
-
-      persistantJson
 
       /*
       val h1 = Heading(-1,1)
@@ -70,7 +59,3 @@ class ViewTests  extends FunSpec with ShouldMatchers {
 
 }
 
-@BeanInfo
-case class MyClass(x: Int, y: Int, z: String) {
-  def this() = this(0, 0, null)  // default constructor is necessary for deserialization
-}

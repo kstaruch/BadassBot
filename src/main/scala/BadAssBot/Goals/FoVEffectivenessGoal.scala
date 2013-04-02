@@ -4,11 +4,11 @@ import framework._
 import scala.Some
 import framework.Move
 import util.Random
-import BadAssBot.{PossibleAction, ExternalState, Goal}
+import BadAssBot.{InternalState, PossibleAction, ExternalState, Goal}
 
 class FoVEffectivenessGoal(heading: Heading) extends Goal {
 
-  def evaluate(externalState: ExternalState): Option[PossibleAction] = {
+  def evaluate(externalState: ExternalState, internalState: InternalState): Option[PossibleAction] = {
 
     val sumOfCells = externalState.view.coordsInDirectionOf(heading)
       .foldLeft(0.0)(_ + calculateEffectivenessOf(_, externalState))
@@ -27,6 +27,7 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
   protected def calculateEffectivenessForMaster(coord: Coord, view: View, distance: Int): Double = {
     view.Absolute(coord) match {
       case Cell.Enemy if distance < 2 => -1000
+      case Cell.Enemy if distance >= 2 => -400 / distance
       case Cell.EnemySlave => -100 / distance
       case Cell.GoodBeast if distance < 2 => 600
       case Cell.GoodBeast if distance >= 2 => 600 / distance//(150 - distance * 10).max(10)
@@ -37,7 +38,7 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
       case Cell.GoodPlant if distance >= 2 => 500 / distance//(150 - distance * 10).max(10)
       case Cell.Wall if distance < 2 => -1000
       case Cell.Wall if distance >= 2 => (-10 / distance) - Random.nextInt(10)
-      case Cell.Empty => Random.nextDouble()
+      //case Cell.Empty => Random.nextDouble() * 300
       case _ => 0.0
     }
   }
@@ -55,6 +56,7 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
       case Cell.GoodPlant if distance >= 2 => 500 / distance//(150 - distance * 10).max(10)
       case Cell.Wall if distance < 2 => -1000
       case Cell.Wall if distance >= 2 => (-10 / distance) - Random.nextInt(5)
+      case Cell.YourSlave if distance < 10 => -400 / distance // dont really wanna go when other already are
       //case Cell.Empty => Random.nextInt(10)
       //case Cell.Unknown => -10
       case _ => 0.0

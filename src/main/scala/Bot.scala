@@ -7,7 +7,12 @@ class ControlFunctionFactory {
   def create = (input: String) => {
     val (opcode, params) = CommandParser.parse(input)
 
+    var apocalypse: Option[Int] = None
+
     opcode match {
+      case "Welcome" =>
+        apocalypse = Some(params.get("apocalypse").get.toInt)
+
       case "React" =>
 
         try {
@@ -23,7 +28,7 @@ class ControlFunctionFactory {
         val internalStateSerialized = params.getOrElse("internalState", "")
 
         val externalState = ExternalState(
-          generation, name, time, view, energy, master, previousMove, reloadCounter, internalStateSerialized
+          generation, name, time, apocalypse, view, energy, master, previousMove, reloadCounter, internalStateSerialized
         )
 
 

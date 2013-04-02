@@ -26,7 +26,7 @@ object Build extends Build {
       //print("after")
 
       //-x 150 -y 150
-     val cmd = "java %s -cp %s -jar C:/dev/Scalatron/bin/Scalatron.jar -plugins %s -browser no" format (
+     val cmd = "java %s -cp %s -jar D:/dev/Scalatron/bin/Scalatron.jar -plugins %s -browser no" format (
        javaOptions mkString " ",
         ucpfiles.absString,
        bots.absolutePath)
