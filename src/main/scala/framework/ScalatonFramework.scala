@@ -365,6 +365,12 @@ object View {
   }
 }
 
+//TODO: try to get rid of var
+object Precomputed {
+
+  var FoVMap: Map[Heading, Seq[Coord]] = Map()
+}
+
 case class View(cells: String) extends (Coord => Cell) {
 
   val size = math.sqrt(cells.length).toInt
@@ -416,8 +422,29 @@ case class View(cells: String) extends (Coord => Cell) {
     }
   }
 
-  //TODO: refactor to immutable and recursive; optimise - it can be precomputed
   def coordsInDirectionOf(heading: Heading): Seq[Coord] = {
+
+    val offs = size / 2
+
+    if (Precomputed.FoVMap.isEmpty) Precomputed.FoVMap = Map(
+      Heading.North -> relativeFoVInDirectionOf(Heading.North),
+      Heading.NorthEast -> relativeFoVInDirectionOf(Heading.NorthEast),
+      Heading.East -> relativeFoVInDirectionOf(Heading.East),
+      Heading.SouthEast -> relativeFoVInDirectionOf(Heading.SouthEast),
+      Heading.South -> relativeFoVInDirectionOf(Heading.South),
+      Heading.SouthWest -> relativeFoVInDirectionOf(Heading.SouthWest),
+      Heading.West -> relativeFoVInDirectionOf(Heading.West),
+      Heading.NorthWest -> relativeFoVInDirectionOf(Heading.NorthWest)
+    )
+
+    Precomputed.FoVMap.get(heading).get
+      .filter(c => c.x >= -offs && c.x <= offs && c.y >= -offs && c.y <= offs )
+      .map(c => Absolute.fromRelative(c))
+
+  }
+
+  //TODO: recurrsion instead of iteration
+  def relativeFoVInDirectionOf(heading: Heading): Seq[Coord] = {
 
     var result: List[Coord] = Nil
     val offs = size / 2
@@ -426,11 +453,9 @@ case class View(cells: String) extends (Coord => Cell) {
       y <- -offs to offs
       if !(x == 0 && y == 0))
       if (FieldOfView.isIn45DegFieldOfView(Coord(heading.x.value, heading.y.value), Coord(x, y))) {
-        val relative = Coord(x, y)
-        val absolute = Absolute.fromRelative(relative)
-        result = absolute :: result
+        result = Coord(x, y) :: result
       }
-      result
+    result
   }
 
   def canBeTraversed(coord: Coord): Boolean = {

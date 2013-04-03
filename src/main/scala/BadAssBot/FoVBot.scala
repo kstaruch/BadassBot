@@ -24,13 +24,13 @@ class FoVBot {
 
     val moveStrategy = slideIfNeeded(selectMovementStrategy(externalState, internalState).asInstanceOf[Move], externalState)
     val actionStrategy = selectActionStrategy(externalState, internalState)
-    //val reloadState = saveStateReload(externalState, actionStrategy)
+    val reloadState = saveStateReload(externalState, actionStrategy)
 
     val newInternalState = InternalState(Coord(moveStrategy.asInstanceOf[Move].direction), internalState.reloadCounter + 1)
 
     val stateToSave = BotStatePersister().save(newInternalState).asInstanceOf[MiniOp]
 
-    moveStrategy :: actionStrategy :: /*reloadState ::*/ stateToSave :: Nil
+    moveStrategy :: actionStrategy :: reloadState :: stateToSave :: Nil
   }
 
   def selectMovementStrategy(externalState: ExternalState, internalState: InternalState): MiniOp = {
@@ -72,7 +72,7 @@ class FoVBot {
 
     Set(Map[String, String]((pmk, pmv)))
   }
-        /*
+
   def saveStateReload(externalState: ExternalState, action: MiniOp): MiniOp = {
 
     val newReload = action match {
@@ -81,7 +81,7 @@ class FoVBot {
     }
     val (rmk, rmv) = ("reloadCounter", "%d".format(newReload))
     Set(Map[String, String]((rmk, rmv)))
-  }   */
+  }
 
   def slideIfNeeded(move: Move, externalState: ExternalState): MiniOp =
     Move(externalState.view.slideIfNeeded(move.direction))

@@ -10,6 +10,7 @@ class ControlFunctionFactory {
 class ControlFunction {
 
   var globals = Map[String, String]()
+  var startTime = 0L
 
   def respond(input: String): String = {
     val (opcode, params) = CommandParser.parse(input)
@@ -17,6 +18,7 @@ class ControlFunction {
     opcode match {
       case "Welcome" =>
         globals = params
+        startTime = System.currentTimeMillis
         ""
       case "React" =>
 
@@ -50,7 +52,13 @@ class ControlFunction {
             ""
           }
         }
+      case "Goodbye" =>
+        val endTime = System.currentTimeMillis
+        val round = globals("round").toInt
+        val energy = params("energy").toInt
 
+        println("BadassBot: round=" + round + ", score=" + energy + ", time=" + ((endTime - startTime) / 1000) + "s")
+        ""
       case _ => ""
     }
   }
