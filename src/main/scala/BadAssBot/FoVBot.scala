@@ -16,7 +16,7 @@ class FoVBot {
   val actionSelector: ActionSelector = BadAssBot.ActionSelectors.ActionSelector()
   def allShortTermGoals: Seq[Goal] = RunFromEnemy(5) :: Nil
   def allLongTermGoals: Seq[Goal] = Random.shuffle(MN :: MNE :: ME :: MSE :: MS :: MSW :: MW :: MNW ::Nil)
-  def allActionGoals: Seq[Goal] = RandomMinionSpawn(0.5) :: EnemyProximityMinionSpawn(15) ::  Nil
+  def allActionGoals: Seq[Goal] = RandomMinionSpawn(0.75) :: EnemyProximityMinionSpawn(15) :: new StopOnApocalypse ::  Nil
 
   def React(externalState: ExternalState): Seq[MiniOp] = {
 

@@ -46,7 +46,7 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
   protected def calculateEffectivenessForSlave(coord: Coord, view: View, distance: Int): Double = {
     view.Absolute(coord) match {
       case Cell.Enemy if distance < 10 => 1000
-      case Cell.EnemySlave => 100 / distance
+      case Cell.EnemySlave => 500 / distance
       case Cell.GoodBeast if distance < 2 => 600
       case Cell.GoodBeast if distance >= 2 => 600 / distance//(150 - distance * 10).max(10)
       case Cell.BadBeast if distance <= 4 => 400

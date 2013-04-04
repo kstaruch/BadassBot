@@ -19,6 +19,7 @@ class ControlFunction {
       case "Welcome" =>
         globals = params
         startTime = System.currentTimeMillis
+
         ""
       case "React" =>
 
