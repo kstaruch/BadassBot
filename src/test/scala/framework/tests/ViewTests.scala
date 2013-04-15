@@ -26,19 +26,6 @@ class ViewTests  extends FunSpec with ShouldMatchers {
 
       view.offsetToNearest(Cell.BadBeast) should equal(Some(Coord(2, 0)))
 
-
-      /*
-      val h1 = Heading(-1,1)
-
-      val t1 = h1.x.value
-
-      val t2 = h1.y.value
-
-      val s = h1.toString
-
-      s
-        */
-
     }
 
     it("calculates None nearest enemy offset correctly") {

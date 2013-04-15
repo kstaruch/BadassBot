@@ -26,7 +26,7 @@ object Build extends Build {
       //print("after")
 
       //-x 150 -y 150
-     val cmd = "java %s -cp %s -jar D:/dev/Scalatron/bin/Scalatron.jar -plugins %s -browser no" format (
+     val cmd = "java %s -cp %s -jar D:/dev/Scalatron/bin/Scalatron.jar -plugins %s -x 100 -y 100 -browser no -secure yes -maxslaves 5" format (
        javaOptions mkString " ",
         ucpfiles.absString,
        bots.absolutePath)
@@ -50,8 +50,7 @@ object Build extends Build {
 
     libraryDependencies ++= Seq(
       "junit" % "junit" % "4.8.1" % "test",
-      "org.scalatest" %% "scalatest" % "1.8" % "test",
-      "net.debasishg" %% "sjson" % "0.17" % "compile"
+      "org.scalatest" %% "scalatest" % "1.8" % "test"
     ),
 
     botDirectory := file("bots"),

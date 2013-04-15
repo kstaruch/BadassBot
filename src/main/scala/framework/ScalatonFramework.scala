@@ -180,7 +180,7 @@ object NoOp {
 }
 
 class NoOp extends MiniOp {
-  override def toString = Util.string("Log", "text" -> "NoOp")
+  override def toString = Util.string("Log", "text" -> "")
 }
 
 object Color {
@@ -255,8 +255,6 @@ object Util {
     val s = w.toString
 
     s.substring(0, s.length - 1) + ")"
-
-    //w.append(")").toString
   }
 }
 
@@ -365,10 +363,9 @@ object View {
   }
 }
 
-//TODO: try to get rid of var
 object Precomputed {
-
   var FoVMap: Map[Heading, Seq[Coord]] = Map()
+  var RangeMap: Map[Int, Seq[Int]] = Map()
 }
 
 case class View(cells: String) extends (Coord => Cell) {
@@ -376,21 +373,30 @@ case class View(cells: String) extends (Coord => Cell) {
   val size = math.sqrt(cells.length).toInt
   val center = Coord(size / 2, size / 2)
 
+  def subSet(range: Int): View = {
+
+    val indexes = Precomputed.RangeMap.getOrElse(range,
+    {
+      val toAdd = (0 to cells.length -1).filter(i => Relative.fromIndex(i).stepCount <= range)
+      Precomputed.RangeMap = Precomputed.RangeMap.updated(range, toAdd)
+      toAdd
+    })
+
+    View(indexes.map(i => cells(i)).mkString)
+  }
+
   def apply(c: Coord): Cell = Relative(c)
+
 
   def nearestEnemyInRange(range: Int): Option[Coord] = {
 
-    val enemyOffsets = offsetToNearest(Cell.Enemy) :: offsetToNearest(Cell.BadBeast) ::
-      offsetToNearest(Cell.EnemySlave) :: Nil
+    val enemies = (c: Char) => (Cell(c) == Cell.Enemy || Cell(c) == Cell.BadBeast || Cell(c) == Cell.EnemySlave)
 
-    enemyOffsets.flatten.filter(_.length <= range) match {
-      case Nil => None
-      case x => Some(Absolute.fromRelative(x.minBy(_.length)))
-    }
+    cachedOffsetToNearest(enemies, range)
   }
 
   def slideIfNeeded(heading: Heading): Heading = {
-    val candidate = Absolute.fromRelative(Coord(heading.x.value, heading.y.value)) //TODO: simplify
+    val candidate = Absolute.fromRelative(Coord(heading.x.value, heading.y.value))
     canBeTraversed(candidate) match {
       case true => heading
       case false => slideIfNeeded(rotateClockwise(heading))
@@ -411,7 +417,7 @@ case class View(cells: String) extends (Coord => Cell) {
     }
   }
 
-  //TODO: refactor
+
   def chooseValidRandomHeading: Heading = {
 
     val candidate = Heading.random
@@ -468,6 +474,12 @@ case class View(cells: String) extends (Coord => Cell) {
     }
   }
 
+  def canBeMovedInDirection(direction: Heading): Boolean = {
+    canBeTraversed(Absolute.fromRelative(Coord(direction)))
+
+  }
+
+
   def validNeighborsOf(c: Coord): Seq[Coord] = {
     validNeighborsOf(c, 1)
   }
@@ -493,6 +505,16 @@ case class View(cells: String) extends (Coord => Cell) {
     }
 
     neighbors
+  }
+
+  def cachedOffsetToNearest(predicate: Char => Boolean, range: Int): Option[Coord] =  {
+
+    val sub = subSet(range)
+
+    sub.cells.view.zipWithIndex.filter(ce => predicate(ce._1)) match {
+      case Nil => None
+      case x => Some(x.map(p => sub.Relative.fromIndex(p._2)).minBy(_.length))
+    }
   }
 
   def offsetToNearest(c: Cell): Option[Coord] =

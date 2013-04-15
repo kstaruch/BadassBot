@@ -6,11 +6,14 @@ import framework.Spawn
 case class EnemyProximityMinionSpawn(range: Int) extends Goal {
 
   def evaluate(externalState: ExternalState, internalState: InternalState): Option[PossibleAction] = {
-    //TODO: map instead match
+    externalState.slaveLimitReached orElse fireIfEnemyInRange(externalState)
+  }
+
+  protected def fireIfEnemyInRange(externalState: ExternalState): Option[PossibleAction] = {
+
     externalState.view.nearestEnemyInRange(range) match {
       case Some(coords) if externalState.isReadyToFire => {
-        //print("fire ")
-        Some(PossibleAction(Spawn(direction = coords.signum.toHeading, energy = 100), 1))
+        Some(PossibleAction(Spawn(direction = coords.signum.toHeading, energy = 100), 100))
       }
       case _ => None
     }

@@ -1,8 +1,12 @@
 package BadAssBot
 
-import Goals.{RandomMinionSpawn, Suicide, GoHome}
+import BadAssBot.Goals._
+import BadAssBot.Goals.RandomMinionSpawn
+import BadAssBot.Goals.GoHome
+import BadAssBot.Goals.Suicide
 
 class MiniFoVBot extends FoVBot {
-  override def allShortTermGoals: Seq[Goal] = GoHome(500) /*:: BecomeMine(5, 0.05)*/ :: Nil
-  override def allActionGoals: Seq[Goal]  = Suicide(3) :: RandomMinionSpawn(0.5) :: Nil
+  override def allShortTermGoals: Seq[Goal] = ContinueSlide(10) :: GoHome(1400) :: Nil
+  override def allActionGoals: Seq[Goal]  = Suicide(3) ::
+    SuicideBeforeApocalypse(5) :: RandomMinionSpawn(0.8) :: EnemyProximityMinionSpawn(5) :: Nil
 }

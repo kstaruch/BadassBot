@@ -33,11 +33,12 @@ class ControlFunction {
           val master =  Coord.parse(params.getOrElse("master", "0:0"))
           val reloadCounter = params.getOrElse("reloadCounter", "0").toInt
           val previousMove =  Coord.parse(params.getOrElse(name + "_prevMove" , "0:0"))
-          val internalStateSerialized = params.getOrElse("internalState", "")
           val apocalypse = globals.getOrElse("apocalypse", "0").toInt
+          val maxSlaves = globals.getOrElse("maxslaves", Int.MaxValue.toString).toInt
+          val slaves = params.getOrElse("slaves", "0").toInt
 
           val externalState = ExternalState(
-            generation, name, time, apocalypse, view, energy, master, previousMove, reloadCounter, internalStateSerialized
+            generation, name, time, apocalypse, view, energy, master, previousMove, reloadCounter, maxSlaves, slaves, params//internalStateSerialized
           )
 
           val bot = generation match {

@@ -18,9 +18,11 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
 
   def calculateEffectivenessOf(coord: Coord, externalState: ExternalState): Double = {
 
+    val distance = externalState.view.Relative.fromAbsolute(coord).stepCount
+
     externalState.isSlave match {
-      case true => calculateEffectivenessForSlave(coord, externalState.view, coord.stepsTo(externalState.view.center))
-      case false => calculateEffectivenessForMaster(coord, externalState.view, coord.stepsTo(externalState.view.center))
+      case true => calculateEffectivenessForSlave(coord, externalState.view, distance)
+      case false => calculateEffectivenessForMaster(coord, externalState.view, distance)
     }
   }
 
@@ -29,16 +31,15 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
       case Cell.Enemy if distance < 2 => -1000
       case Cell.Enemy if distance >= 2 => -400 / distance
       case Cell.EnemySlave => -100 / distance
-      case Cell.GoodBeast if distance < 2 => 600
-      case Cell.GoodBeast if distance >= 2 => 600 / distance//(150 - distance * 10).max(10)
-      case Cell.BadBeast if distance <= 4 => -400
-      case Cell.BadBeast if distance > 4 => -50
+      case Cell.GoodBeast if distance < 2 => 1000
+      case Cell.GoodBeast if distance >= 2 => 600 / distance
+      case Cell.BadBeast if distance <= 2 => -1000
+      case Cell.BadBeast if distance > 2 => -150 / distance
       case Cell.BadPlant if distance < 2 => -1000
       case Cell.GoodPlant if distance < 2 => 500
-      case Cell.GoodPlant if distance >= 2 => 500 / distance//(150 - distance * 10).max(10)
+      case Cell.GoodPlant if distance >= 2 => 500 / distance
       case Cell.Wall if distance < 2 => -1000
-      case Cell.Wall if distance >= 2 => (-10 / distance) - Random.nextInt(10)
-      //case Cell.Empty => Random.nextDouble() * 300
+      case Cell.YourSlave => 500 / distance
       case _ => 0.0
     }
   }
@@ -48,17 +49,17 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
       case Cell.Enemy if distance < 10 => 1000
       case Cell.EnemySlave => 500 / distance
       case Cell.GoodBeast if distance < 2 => 600
-      case Cell.GoodBeast if distance >= 2 => 600 / distance//(150 - distance * 10).max(10)
-      case Cell.BadBeast if distance <= 4 => 400
-      case Cell.BadBeast if distance > 4 => 50
+      case Cell.GoodBeast if distance >= 2 => 600 / distance
+      case Cell.BadBeast if distance <= 4 => -400
+      case Cell.BadBeast if distance > 4 => -50 / distance
       case Cell.BadPlant if distance < 2 => -100
       case Cell.GoodPlant if distance < 2 => 500
-      case Cell.GoodPlant if distance >= 2 => 500 / distance//(150 - distance * 10).max(10)
+      case Cell.GoodPlant if distance >= 2 => 500 / distance
       case Cell.Wall if distance < 2 => -1000
       case Cell.Wall if distance >= 2 => (-10 / distance) - Random.nextInt(5)
-      case Cell.YourSlave if distance < 10 => -400 / distance // dont really wanna go when other already are
-      //case Cell.Empty => Random.nextInt(10)
-      //case Cell.Unknown => -10
+      case Cell.YourSlave if distance <= 2 => -50
+      case Cell.YourSlave if distance > 2 && distance < 15 => 10 / distance
+      case Cell.You => -500 / distance
       case _ => 0.0
     }
   }
