@@ -5,7 +5,7 @@ import scala.util.Random
 
 case class ExternalState(generation: Int, name: String, time: Int, apocalypse: Int, view: View,
                          energy: Int, master: Coord, previousMove: Coord, reloadCounter: Int,
-                         maxSlaves: Int, slaves: Int,
+                         maxSlaves: Int, slaves: Int, role: Option[String],
                          state: Map[String, String]) {
 
 
@@ -29,6 +29,6 @@ case class ExternalState(generation: Int, name: String, time: Int, apocalypse: I
   }
 
 
-  val isReadyToFire = Random.nextDouble() < 0.2
+  val isReadyToFire = true//Random.nextDouble() < 0.2
   val isSlave = generation > 0
 }

@@ -51,14 +51,14 @@ class FoVEffectivenessGoal(heading: Heading) extends Goal {
       case Cell.GoodBeast if distance < 2 => 600
       case Cell.GoodBeast if distance >= 2 => 600 / distance
       case Cell.BadBeast if distance <= 4 => -400
-      case Cell.BadBeast if distance > 4 => -50 / distance
+      case Cell.BadBeast if distance > 4 => -150 / distance
       case Cell.BadPlant if distance < 2 => -100
       case Cell.GoodPlant if distance < 2 => 500
       case Cell.GoodPlant if distance >= 2 => 500 / distance
       case Cell.Wall if distance < 2 => -1000
-      case Cell.Wall if distance >= 2 => (-10 / distance) - Random.nextInt(5)
-      case Cell.YourSlave if distance <= 2 => -50
-      case Cell.YourSlave if distance > 2 && distance < 15 => 10 / distance
+      //case Cell.Wall if distance >= 2 => (-10 / distance) - Random.nextInt(5)
+      case Cell.YourSlave if distance <= 3 => -1000
+      case Cell.YourSlave if distance > 3 && distance < 15 => 10 / distance
       case Cell.You => -500 / distance
       case _ => 0.0
     }

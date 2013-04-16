@@ -11,7 +11,8 @@ class SimpleStatePersister extends BotStatePersister {
       ("previousMove", state.previousMove.toString),
       ("reloadCounter", state.reloadCounter.toString),
       ("age", state.age.toString),
-      ("slideStart", state.slideStart.toString)
+      ("slideStart", state.slideStart.toString),
+      ("role", state.role)
     ))
   }
 
@@ -21,7 +22,8 @@ class SimpleStatePersister extends BotStatePersister {
     val reloadCounter = input.getOrElse("reloadCounter", "0").toInt
     val age = input.getOrElse("age", "0").toInt
     val slideStart = input.getOrElse("slideStart", "0").toInt
+    val role = input.getOrElse("role", "None")
 
-    InternalState(previousMove, reloadCounter, age, slideStart)
+    InternalState(previousMove, reloadCounter, age, slideStart, role)
   }
 }

@@ -4,6 +4,9 @@ import BadAssBot.{InternalState, PossibleAction, ExternalState, Goal}
 import util.Random
 import framework.{Heading, Spawn}
 
+/**
+ * A strategy of spawning mini-bots with a given probability as long as energy is sufficient
+ */
 case class RandomMinionSpawn(randomSpawnChance: Double) extends Goal {
 
   def evaluate(externalState: ExternalState, internalState: InternalState): Option[PossibleAction] = {

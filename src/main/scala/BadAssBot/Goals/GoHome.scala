@@ -2,8 +2,11 @@ package BadAssBot.Goals
 
 import BadAssBot.{InternalState, PossibleAction, ExternalState, Goal}
 import framework.{Heading, Coord, Move}
-import util.Random
 
+/**
+ * Represents a strategy of returning to the master with obtained energy
+ * @param energyThreshold
+ */
 case class GoHome(energyThreshold: Int) extends Goal {
 
   def evaluate(externalState: ExternalState, internalState: InternalState): Option[PossibleAction] = {

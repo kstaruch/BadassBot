@@ -10,12 +10,15 @@ import scala.Some
 import framework.Move
 import framework.Set
 
-class FoVBot {
+
+
+class FoVBot(settings: SimulationSettings) {
 
   val actionSelector: ActionSelector = ActionSelector()
-  def allShortTermGoals: Seq[Goal] = ContinueSlide(5) ::  Nil
+  def allShortTermGoals: Seq[Goal] = ContinueSlide(settings.slideLength) ::  Nil
   def allLongTermGoals: Seq[Goal] = Random.shuffle(MN :: MNE :: ME :: MSE :: MS :: MSW :: MW :: MNW ::Nil)
-  def allActionGoals: Seq[Goal] = RandomMinionSpawn(0.8) :: EnemyProximityMinionSpawn(10)  ::  Nil
+  def allActionGoals: Seq[Goal] = RandomMinionSpawn(settings.minionSpawnProbability) ::
+    EnemyProximityMinionSpawn(settings.enemyMinionSpawnDistance, settings.enemyMinionSpawnProbability)  ::  Nil
 
   def React(externalState: ExternalState): Seq[MiniOp] = {
 
@@ -35,11 +38,19 @@ class FoVBot {
       isSliding match {
         case true => externalState.time
         case false => 0
-      })
+      },
+      actionToRole(actionStrategy))
 
     val stateToSave = BotStatePersister().save(newInternalState).asInstanceOf[MiniOp]
 
     moveWithSlide :: actionStrategy :: reloadState :: stateToSave :: Nil
+  }
+
+  def actionToRole(action: MiniOp): String = {
+    action match {
+      case a: SpawnWithRole => a.role
+      case _ => "None"
+    }
   }
 
   def selectMovementStrategy(externalState: ExternalState, internalState: InternalState): MiniOp = {

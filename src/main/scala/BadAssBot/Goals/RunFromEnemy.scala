@@ -14,3 +14,5 @@ case class RunFromEnemy(range: Int) extends Goal {
     }
   }
 }
+
+

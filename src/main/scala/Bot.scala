@@ -1,6 +1,6 @@
 
 import framework._
-import BadAssBot.{MiniFoVBot, ExternalState, FoVBot}
+import BadAssBot.{SimulationSettings, MiniFoVBot, ExternalState, FoVBot}
 
 class ControlFunctionFactory {
 
@@ -36,14 +36,39 @@ class ControlFunction {
           val apocalypse = globals.getOrElse("apocalypse", "0").toInt
           val maxSlaves = globals.getOrElse("maxslaves", Int.MaxValue.toString).toInt
           val slaves = params.getOrElse("slaves", "0").toInt
+          val role = params.get("role")
 
           val externalState = ExternalState(
-            generation, name, time, apocalypse, view, energy, master, previousMove, reloadCounter, maxSlaves, slaves, params//internalStateSerialized
+            generation, name, time, apocalypse,
+            view, energy, master, previousMove,
+            reloadCounter, maxSlaves, slaves, role, params
           )
 
           val bot = generation match {
-            case 0 => new FoVBot()
-            case _ => new MiniFoVBot()
+            case 0 => {
+              val settings = SimulationSettings(
+                minionSpawnProbability = 0.8,
+                enemyMinionSpawnDistance = 6,
+                enemyMinionSpawnProbability = 0.2 * 1000 / energy,
+                slideLength = 10,
+                energyGoal = (energy / 50).max(200).min(2000),
+                suicideRange = 3,
+                suicideProbability = 0.3,
+                roundsBeforeApocalypseSuicide = 5)
+              new FoVBot(settings)
+            }
+            case _ => {
+              val settings = SimulationSettings(
+                minionSpawnProbability = 0.8,
+                enemyMinionSpawnDistance = 3,
+                enemyMinionSpawnProbability = 0.1 * 1000 / energy,
+                slideLength = 10,
+                energyGoal = (energy / 50).min(200).max(2000),
+                suicideRange = 3,
+                suicideProbability = 0.3,
+                roundsBeforeApocalypseSuicide = 5)
+              new MiniFoVBot(settings)
+            }
           }
 
           bot.React(externalState).mkString("|")
